@@ -51,6 +51,7 @@ if (!claudeFound) {
   line(info, 'Install it: npm install -g @anthropic-ai/claude-code');
   line(info, '  (or the platform installer at https://docs.claude.com/en/docs/claude-code)');
   line(info, 'Then run `claude` once and complete login. The bridge uses that login — no API key needed.');
+  line(info, 'For local inference instead, use Ollama mode; it needs no Claude login or API key.');
 }
 
 // --- ~/.claude.json and MCP servers --------------------------------------
@@ -111,6 +112,9 @@ console.log('  2)  npm run dev         # the face (open http://localhost:5173 in
 console.log('');
 console.log('Then click INITIALISE and say "Hey Jarvis".');
 console.log('To let JARVIS take real actions (phone, browser, sending), run `npm run bridge:writes` instead of `npm run bridge`.');
+if (process.platform === 'win32') {
+  console.log('  Local Ollama setup: run `./run-jarvis.ps1` from PowerShell.');
+}
 console.log('');
 
 process.exit(0);

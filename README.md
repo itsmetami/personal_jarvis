@@ -3,28 +3,37 @@
 A browser voice assistant with an Iron Man holographic interface. Say
 **"Hey Jarvis"**, he wakes, listens, and does real things through your tools —
 searches the web, generates images, drives your phone, reads your mail. The face
-is a web page (React + Vite + Three.js + custom GLSL). The brain is Claude Code,
-run headless as a library.
+is a web page (React + Vite + Three.js + custom GLSL). The brain can run through
+Claude Code or locally through Ollama.
 
-**The only subscription you need is Claude Code.** No API keys, no OpenAI
-account, no cloud bill — the brain runs on your existing Claude Code login, and
-the heavy work (the model itself) runs on Anthropic's servers, so even a low-end
-laptop only has to draw the interface. **ElevenLabs is an optional add-on** that
+The Claude Code bridge uses your existing Claude login and runs inference on
+Anthropic's servers. The Ollama option runs a downloaded model on your PC and
+needs no subscription or API key. **ElevenLabs is an optional add-on** that
 gives JARVIS a much better voice and sharper hearing; without it he speaks and
-listens through the browser's own speech, and everything still works.
+listens through the browser's built-in speech services.
 
 ---
 
 ## Requirements
 
-**In one line:** a Claude Code subscription, plus two free things every computer
-can have — Node.js and Chrome. That's the whole list.
+**In one line:** Node.js and Chrome, plus one brain option:
 
-- **Claude Code, installed and logged in** — this is the only account you need.
+- **Claude Code** — uses your Claude account and enables the bridge tools.
+- **Ollama** — runs a downloaded model on your PC, with no account or API key.
+
+- **For bridge mode: Claude Code, installed and logged in** — this is the only account you need.
   Install it with the official method — `npm install -g @anthropic-ai/claude-code`,
   or the platform installer at <https://docs.claude.com/en/docs/claude-code> —
   then run `claude` once and complete login. The bridge reuses that login. **No
   API key**, and usage is billed to your existing Claude account.
+- **Or Ollama**, if you want to keep model inference local. Install Ollama from
+  <https://ollama.com/download>, then pull a small model such as
+  `qwen3.5:2b-q4_K_M` (about 1.9 GB). In this mode JARVIS answers locally but
+  does not have hosted web search or the bridge's MCP tools. The local Ollama
+  launcher also enables a small allowlist of desktop actions: report the PC's
+  local time, open selected built-in apps or standard folders, and open HTTP(S)
+  links. It cannot run arbitrary shell commands, read arbitrary files, or delete
+  files.
 - **Node.js 20 or newer** — free, one installer from <https://nodejs.org>. This
   is a Node web app, so it is the one unavoidable tool.
 - **Google Chrome or Microsoft Edge**, in a **real browser window** — not an
@@ -41,6 +50,33 @@ language.
 ---
 
 ## Quick start
+
+### Local model with Ollama
+
+On Windows, install Node.js 20+ and Ollama, then double-click `Start-JARVIS.bat`.
+The launcher installs project dependencies on first run, starts Ollama if needed,
+and asks before downloading the default `qwen3.5:2b-q4_K_M` model (about 1.9 GB).
+Keep its console window open while using JARVIS; that interactive session is
+needed to open Windows apps. Open the localhost URL printed by Vite (the port may
+change if another JARVIS instance is running).
+
+No Claude login or API key is used. Ollama mode provides local
+conversation and a limited local desktop tool set. Say things like “what time is
+it?”, “open Calculator”, “open Downloads”, or “open example.com”. The optional
+app allowlist includes Chrome, Edge, Discord, WhatsApp, Viber, Steam, Epic Games,
+Riot Client, Roblox, Valorant, League of Legends, LibreOffice, and common Windows
+apps. A named app must also be installed in its usual location. Terminals and
+system administration tools are excluded. Hosted search and MCP servers remain
+unavailable.
+
+To move JARVIS to another Windows PC, clone this repository there and install
+Node.js 20+ and Ollama, then run the batch launcher. The model downloads into
+that PC's Ollama storage and is not part of Git. Copy
+`personalization/profile.example.md` to `personalization/profile.md` and fill in
+your preferences; the private file is ignored by Git and is supplied only to the
+local Ollama prompt. This is profile context, not model fine-tuning.
+
+### Claude Code bridge
 
 First, install, then start it:
 
@@ -252,8 +288,10 @@ Everything is optional in bridge mode. Frontend settings live in `.env.local`
 
 | Variable | Effect |
 |---|---|
-| `VITE_BACKEND` | `bridge` (default) or `direct` |
+| `VITE_BACKEND` | `bridge` (default), `direct`, or `ollama` |
 | `VITE_BRIDGE_URL` | Where to reach the bridge |
+| `VITE_OLLAMA_BASE_URL` | Local Vite proxy path for Ollama (`/ollama`) |
+| `VITE_OLLAMA_MODEL` | Ollama model name (`qwen3.5:2b-q4_K_M`) |
 | `VITE_TTS_ENGINE` | `system` or `kokoro` |
 | `VITE_KOKORO_VOICE` | Voice for the Kokoro engine |
 | `VITE_USE_ELEVENLABS` | Force the ElevenLabs voice on |

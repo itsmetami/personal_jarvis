@@ -54,16 +54,21 @@ function flag(name: string, raw: unknown, fallback: boolean): boolean {
  *              your Claude Code config is available to JARVIS, including local
  *              ones like higgsfield, elevenlabs, android and playwright.
  *
- *   'direct' — the browser calls the Claude API itself. Nothing to run and it
- *              deploys as a static site, but it needs VITE_ANTHROPIC_API_KEY in
- *              the bundle and only reaches remote HTTP MCP servers.
+ *   'direct' — the browser calls the Claude API itself. Needs an Anthropic key.
+ *   'ollama' — the browser calls the local Ollama Messages API. No key or cloud.
  */
-export const BACKEND: 'bridge' | 'direct' = choice(
+export const BACKEND: 'bridge' | 'direct' | 'ollama' = choice(
   'VITE_BACKEND',
   import.meta.env.VITE_BACKEND,
-  ['bridge', 'direct'] as const,
+  ['bridge', 'direct', 'ollama'] as const,
   'bridge',
 )
+
+/** Local Ollama endpoint and model used by the browser-only Ollama backend. */
+export const OLLAMA_BASE_URL =
+  str(import.meta.env.VITE_OLLAMA_BASE_URL) ?? '/ollama'
+export const OLLAMA_MODEL =
+  str(import.meta.env.VITE_OLLAMA_MODEL) ?? 'qwen3.5:2b-q4_K_M'
 
 /**
  * Where the bridge lives. Derived once here rather than in each of the three
